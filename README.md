@@ -47,8 +47,10 @@ AgentWatchCore/      Swift Package with Linux-testable shared logic
 agent-watch-server/  FastAPI VPS server (Python 3.12)
 docs/                Architecture, API contract, checklists
 scripts/             Token generator, cert-pinning helper
-.github/workflows/   CI for Swift lint + Python tests
+.github/workflows/   CI workflows (removed; see note below)
 ```
+
+> **CI workflows:** The GitHub Actions workflows for Swift lint and Python tests have been removed due to push-token workflow scope limitations. You can re-add them after pushing with a GitHub token that has the `workflow` scope.
 
 ## Documentation
 
