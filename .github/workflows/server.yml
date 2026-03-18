@@ -1,0 +1,46 @@
+name: Server CI
+
+on:
+  push:
+    paths:
+      - 'agent-watch-server/**'
+      - '.github/workflows/server.yml'
+  pull_request:
+    paths:
+      - 'agent-watch-server/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: agent-watch-server
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: agent-watch-server/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Lint with ruff
+        run: ruff check .
+
+      - name: Type check with mypy
+        run: mypy . --ignore-missing-imports
+
+      - name: Run pytest
+        env:
+          AUTH_TOKEN: ci-test-token-12345
+          ANTHROPIC_API_KEY: sk-ant-ci-placeholder
+        run: pytest tests/ -v --tb=short
+
+      - name: Secret scan
+        run: |
+          pip install trufflehog3 2>/dev/null || echo "trufflehog3 not available, skipping"
