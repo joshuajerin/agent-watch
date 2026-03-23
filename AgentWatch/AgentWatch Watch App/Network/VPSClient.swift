@@ -5,6 +5,7 @@
 // but WebSocket task requires Darwin runtime for actual connections.
 
 import Foundation
+import CryptoKit
 
 @MainActor
 final class VPSClient: NSObject, ObservableObject, URLSessionDelegate {
@@ -28,7 +29,7 @@ final class VPSClient: NSObject, ObservableObject, URLSessionDelegate {
 
     private var webSocketTask: URLSessionWebSocketTask?
     private var session: URLSession?
-    private var pinnedCertHash: String?
+    private nonisolated(unsafe) var pinnedCertHash: String?
     private var isAuthenticated = false
 
     var onChunk: ((String, String) -> Void)?    // (text, session_id)
@@ -150,7 +151,8 @@ final class VPSClient: NSObject, ObservableObject, URLSessionDelegate {
         }
 
         // Pin leaf certificate
-        guard let cert = SecTrustGetCertificateAtIndex(serverTrust, 0) else {
+        guard let certs = SecTrustCopyCertificateChain(serverTrust) as? [SecCertificate],
+              let cert = certs.first else {
             completionHandler(.cancelAuthenticationChallenge, nil)
             return
         }
@@ -165,15 +167,9 @@ final class VPSClient: NSObject, ObservableObject, URLSessionDelegate {
         }
     }
 
-    private func sha256Hex(_ data: Data) -> String {
-        #if canImport(CryptoKit)
-        import CryptoKit
+    private nonisolated func sha256Hex(_ data: Data) -> String {
         let digest = SHA256.hash(data: data)
         return digest.map { String(format: "%02x", $0) }.joined()
-        #else
-        // Placeholder for Linux builds — cert pinning not active
-        return ""
-        #endif
     }
 }
 

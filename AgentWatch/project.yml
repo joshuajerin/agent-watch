@@ -1,0 +1,36 @@
+name: AgentWatch
+options:
+  bundleIdPrefix: com.joshuajerin
+  deploymentTarget:
+    watchOS: "10.0"
+  xcodeVersion: "16.0"
+  generateEmptyDirectories: false
+
+packages:
+  AgentWatchCore:
+    path: ../AgentWatchCore
+
+targets:
+  AgentWatch Watch App:
+    type: application
+    platform: watchOS
+    sources:
+      - path: AgentWatch Watch App
+        excludes:
+          - Info.plist
+          - PrivacyInfo.xcprivacy
+    dependencies:
+      - package: AgentWatchCore
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.joshuajerin.agentwatchs
+        PRODUCT_NAME: Agent Watch
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: "1"
+        INFOPLIST_FILE: "AgentWatch Watch App/Info.plist"
+        CODE_SIGN_STYLE: Automatic
+        SWIFT_VERSION: "5.9"
+        GENERATE_INFOPLIST_FILE: false
+    entitlements:
+      path: AgentWatch Watch App/AgentWatch.entitlements
+      properties: {}
