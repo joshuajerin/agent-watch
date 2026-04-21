@@ -24,12 +24,15 @@ def test_health_endpoint(client):
     assert resp.status_code == 200
     data = resp.json()
     assert data["status"] == "ok"
-    assert "version" in data
+    assert data["version"] == "1.0.0"
+    assert data["provider"] == "anthropic"
+    assert data["model"] == "claude-haiku-4-5-20251001"
+    assert data["rate_limit_qpm"] == 20
 
 
 def test_query_no_auth(client):
     resp = client.post("/v1/query", json={"text": "hello"})
-    assert resp.status_code == 403
+    assert resp.status_code == 401
 
 
 def test_query_invalid_auth(client):

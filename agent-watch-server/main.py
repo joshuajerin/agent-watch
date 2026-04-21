@@ -32,7 +32,13 @@ app.include_router(api_router, prefix="/v1")
 
 @app.get("/health")
 async def health() -> dict:
-    return {"status": "ok", "version": "1.0.0"}
+    return {
+        "status": "ok",
+        "version": "1.0.0",
+        "provider": settings.ai_provider,
+        "model": settings.ai_model,
+        "rate_limit_qpm": settings.rate_limit_qpm,
+    }
 
 
 if __name__ == "__main__":
