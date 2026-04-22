@@ -39,6 +39,23 @@ In the Watch app → Settings:
 - **VPS URL:** `wss://your-vps-ip:443/ws`
 - **Auth Token:** the value of `AUTH_TOKEN` from your `.env`
 
+### 4. Smoke Test the Server Before Pairing the Watch
+
+```bash
+cd agent-watch-server
+cp .env.example .env  # if you have not created it yet
+uvicorn main:app --host 127.0.0.1 --port 8000 --reload
+curl http://127.0.0.1:8000/health
+```
+
+Expected health response shape:
+
+```json
+{"status":"ok","version":"1.0.0","provider":"anthropic","model":"claude-haiku-4-5-20251001","rate_limit_qpm":20}
+```
+
+That gives you a quick sanity check that config loading, model selection, and the local API process are all wired before testing on-device.
+
 ## Repository Layout
 
 ```
